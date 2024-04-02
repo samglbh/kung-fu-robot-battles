@@ -1,12 +1,30 @@
 namespace SpriteKind {
     export const droid = SpriteKind.create()
+    export const collectable = SpriteKind.create()
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (move_allowed == true) {
-        mySprite.changeScale(5, ScaleAnchor.Middle)
-        pause(A_move)
-        mySprite.setScale(1, ScaleAnchor.Middle)
-        statusbar.value += -25
+        for (let index = 0; index < A_move; index++) {
+            projectile = sprites.createProjectileFromSprite(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . 2 . . . . . . . 
+                . . . . . . . 2 2 . . . . . . . 
+                . . . . . . . 4 2 . . . . . . . 
+                . . . . . . 2 4 2 . . . . . . . 
+                . . 2 2 2 2 5 5 5 2 . . . . . . 
+                . . . 2 4 4 5 . 5 4 4 2 . . . . 
+                . . . . 2 2 5 5 5 2 2 2 2 . . . 
+                . . . . . . 2 4 2 . . . . . . . 
+                . . . . . . 2 4 . . . . . . . . 
+                . . . . . . 2 2 . . . . . . . . 
+                . . . . . . 2 . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `, mySprite, randint(-50, 50), randint(-50, 50))
+            statusbar.value += -1
+        }
     }
 })
 function wave () {
@@ -18,9 +36,9 @@ function wave () {
             . . . . . . . b b . . . . . . . 
             . . . . . . . c b . . . . . . . 
             . . . . . . b c b . . . . . . . 
-            . . . . . b c c c b . . . . . . 
-            . . . b c c c . c c c b . . . . 
-            . . b b b b c c c b b b b . . . 
+            . . b b b b b b b b . . . . . . 
+            . . . b c c b . b c c b . . . . 
+            . . . . b b b b b b b b b . . . 
             . . . . . . b c b . . . . . . . 
             . . . . . . b c . . . . . . . . 
             . . . . . . b b . . . . . . . . 
@@ -33,27 +51,148 @@ function wave () {
         pause(100)
     }
 }
+info.onLifeZero(function () {
+    if (smoke_bomb == true) {
+        tiles.placeOnRandomTile(mySprite, sprites.castle.tilePath5)
+        smoke_bomb = false
+        info.setLife(5)
+    } else if (smoke_bomb == false) {
+        game.gameOver(false)
+    }
+})
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.droid, function (sprite, otherSprite) {
     sprites.destroy(otherSprite)
     amount_of_defeated_troops += 1
     info.changeScoreBy(1)
 })
 function choose_round () {
-    if (amount_of_troops == 0) {
+    console.logValue("defeated", amount_of_defeated_troops)
+    if (amount_of_defeated_troops == 0) {
         round = 1
-        amount_of_defeated_troops = 0
+        info.setLife(5)
+        mySprite.setImage(img`
+            . . . . . . f f f f . . . . . . 
+            . . . . f f f 1 1 f f f . . . . 
+            . . . f f f 1 1 1 1 f f f . . . 
+            . . f f f 1 1 1 1 1 1 f f f . . 
+            . . 4 4 4 4 4 4 4 4 4 4 4 4 . . 
+            . . 4 4 4 4 4 4 4 4 4 4 4 4 . . 
+            . . f 1 1 1 1 1 1 1 1 1 1 f . . 
+            . f f 1 f f f f f f f f 1 f f . 
+            . f 1 1 f f f f f f f f 1 1 f . 
+            . . f 1 1 1 1 f f 1 1 1 1 f . . 
+            . . . f 1 1 1 f f 1 1 1 f . . . 
+            . . 1 1 f f f f f f f f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . . . . 4 4 4 4 4 4 . . . . . 
+            . . . . . f f . . f f . . . . . 
+            `)
     } else if (amount_of_defeated_troops == 5) {
         round = 2
-        amount_of_defeated_troops = 0
+        info.setLife(5)
+        mySprite.setImage(img`
+            . . . . . . f f f f . . . . . . 
+            . . . . f f f 1 1 f f f . . . . 
+            . . . f f f 1 1 1 1 f f f . . . 
+            . . f f f 1 1 1 1 1 1 f f f . . 
+            . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
+            . . 5 5 5 5 5 5 5 5 5 5 5 5 . . 
+            . . f 1 1 1 1 1 1 1 1 1 1 f . . 
+            . f f 1 f f f f f f f f 1 f f . 
+            . f 1 1 f f f f f f f f 1 1 f . 
+            . . f 1 1 1 1 f f 1 1 1 1 f . . 
+            . . . f 1 1 1 f f 1 1 1 f . . . 
+            . . 1 1 f f f f f f f f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . . . . 5 5 5 5 5 5 . . . . . 
+            . . . . . f f . . f f . . . . . 
+            `)
     } else if (amount_of_defeated_troops == 10) {
         round = 3
-        amount_of_defeated_troops = 0
+        info.setLife(5)
+        mySprite.setImage(img`
+            . . . . . . f f f f . . . . . . 
+            . . . . f f f 1 1 f f f . . . . 
+            . . . f f f 1 1 1 1 f f f . . . 
+            . . f f f 1 1 1 1 1 1 f f f . . 
+            . . 8 8 8 8 8 8 8 8 8 8 8 8 . . 
+            . . 8 8 8 8 8 8 8 8 8 8 8 8 . . 
+            . . f 1 1 1 1 1 1 1 1 1 1 f . . 
+            . f f 1 f f f f f f f f 1 f f . 
+            . f 1 1 f f f f f f f f 1 1 f . 
+            . . f 1 1 1 1 f f 1 1 1 1 f . . 
+            . . . f 1 1 1 f f 1 1 1 f . . . 
+            . . 1 1 f f f f f f f f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . . . . 8 8 8 8 8 8 . . . . . 
+            . . . . . f f . . f f . . . . . 
+            `)
     } else if (amount_of_defeated_troops == 15) {
         round = 4
-        amount_of_defeated_troops = 0
+        info.setLife(5)
+        mySprite.setImage(img`
+            . . . . . . f f f f . . . . . . 
+            . . . . f f f 1 1 f f f . . . . 
+            . . . f f f 1 1 1 1 f f f . . . 
+            . . f f f 1 1 1 1 1 1 f f f . . 
+            . . 6 6 6 6 6 6 6 6 6 6 6 6 . . 
+            . . 6 6 6 6 6 6 6 6 6 6 6 6 . . 
+            . . f 1 1 1 1 1 1 1 1 1 1 f . . 
+            . f f 1 f f f f f f f f 1 f f . 
+            . f 1 1 f f f f f f f f 1 1 f . 
+            . . f 1 1 1 1 f f 1 1 1 1 f . . 
+            . . . f 1 1 1 f f 1 1 1 f . . . 
+            . . 1 1 f f f f f f f f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . . . . 6 6 6 6 6 6 . . . . . 
+            . . . . . f f . . f f . . . . . 
+            `)
     } else if (amount_of_defeated_troops == 20) {
         round = 5
-        amount_of_defeated_troops = 0
+        info.setLife(5)
+        mySprite.setImage(img`
+            . . . . . . f f f f . . . . . . 
+            . . . . f f f 1 1 f f f . . . . 
+            . . . f f f 1 1 1 1 f f f . . . 
+            . . f f f 1 1 1 1 1 1 f f f . . 
+            . . 9 9 9 9 9 9 9 9 9 9 9 9 . . 
+            . . 9 9 9 9 9 9 9 9 9 9 9 9 . . 
+            . . f 1 1 1 1 1 1 1 1 1 1 f . . 
+            . f f 1 f f f f f f f f 1 f f . 
+            . f 1 1 f f f f f f f f 1 1 f . 
+            . . f 1 1 1 1 f f 1 1 1 1 f . . 
+            . . . f 1 1 1 f f 1 1 1 f . . . 
+            . . 1 1 f f f f f f f f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . . . . 9 9 9 9 9 9 . . . . . 
+            . . . . . f f . . f f . . . . . 
+            `)
+    } else if (amount_of_defeated_troops == 25) {
+        round = 6
+        info.setLife(5)
+        mySprite.setImage(img`
+            . . . . . . f f f f . . . . . . 
+            . . . . f f f 1 1 f f f . . . . 
+            . . . f f f 1 1 1 1 f f f . . . 
+            . . f f f 1 1 1 1 1 1 f f f . . 
+            . . 7 7 7 7 7 7 7 7 7 7 7 7 . . 
+            . . 7 7 7 7 7 7 7 7 7 7 7 7 . . 
+            . . f 1 1 1 1 1 1 1 1 1 1 f . . 
+            . f f 1 f f f f f f f f 1 f f . 
+            . f 1 1 f f f f f f f f 1 1 f . 
+            . . f 1 1 1 1 f f 1 1 1 1 f . . 
+            . . . f 1 1 1 f f 1 1 1 f . . . 
+            . . 1 1 f f f f f f f f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . 1 1 f 1 1 1 1 1 1 f 1 1 . . 
+            . . . . . 7 7 7 7 7 7 . . . . . 
+            . . . . . f f . . f f . . . . . 
+            `)
     }
     return round
 }
@@ -66,6 +205,7 @@ statusbars.onZero(StatusBarKind.Energy, function (status) {
 sprites.onOverlap(SpriteKind.Player, SpriteKind.droid, function (sprite, otherSprite) {
     sprites.destroy(otherSprite)
     amount_of_defeated_troops += 1
+    info.changeLifeBy(-1)
     info.changeScoreBy(1)
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -73,11 +213,18 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         wave()
     }
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.collectable, function (sprite, otherSprite) {
+    B_move += 10
+    A_move += 1
+    sprites.destroy(otherSprite)
+    smoke_bomb = true
+})
 let mySprite2: Sprite = null
+let mySprite4: Sprite = null
 let round = 0
-let amount_of_defeated_troops = 0
 let projectile: Sprite = null
-let amount_of_troops = 0
+let smoke_bomb = false
+let amount_of_defeated_troops = 0
 let B_move = 0
 let A_move = 0
 let statusbar: StatusBarSprite = null
@@ -128,11 +275,38 @@ statusbar = statusbars.create(20, 4, StatusBarKind.Energy)
 statusbar.setBarSize(4, 100)
 statusbar.positionDirection(CollisionDirection.Left)
 statusbar.setStatusBarFlag(StatusBarFlag.SmoothTransition, true)
-A_move = 1000
+A_move = 2
 B_move = 100
-amount_of_troops = 0
+let amount_of_troops = 0
+amount_of_defeated_troops = 0
+smoke_bomb = true
+info.setLife(5)
+game.onUpdateInterval(500, function () {
+    mySprite3.setVelocity(randint(-100, 100), randint(-100, 100))
+})
 game.onUpdateInterval(500, function () {
     statusbar.value += 1
+})
+game.onUpdateInterval(10000, function () {
+    mySprite4 = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . 8 . . . . . . . 
+        . . . . . . . 8 8 . . . . . . . 
+        . . . . . . . 6 8 . . . . . . . 
+        . . . . . . 8 6 8 . . . . . . . 
+        . . . . . 8 9 9 9 8 . . . . . . 
+        . . . 8 6 6 9 . 9 6 6 8 . . . . 
+        . . 8 8 8 8 9 9 9 8 8 8 8 . . . 
+        . . . . . . 8 6 8 . . . . . . . 
+        . . . . . . 8 6 . . . . . . . . 
+        . . . . . . 8 8 . . . . . . . . 
+        . . . . . . 8 . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.collectable)
+    tiles.placeOnRandomTile(mySprite4, sprites.castle.tilePath5)
 })
 game.onUpdateInterval(2000, function () {
     choose_round()
@@ -278,7 +452,4 @@ game.onUpdateInterval(2000, function () {
     if (mySprite2 && mySprite3) {
         mySprite2.follow(mySprite3, 25)
     }
-})
-game.onUpdateInterval(500, function () {
-    mySprite3.setVelocity(randint(-50, 50), randint(-50, 50))
 })
