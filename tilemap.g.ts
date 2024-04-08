@@ -20,6 +20,14 @@ namespace myTiles {
     export const tile8 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
     export const tile9 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile10 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile11 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile12 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile13 = image.ofBuffer(hex``);
 
     helpers._registerFactory("tilemap", function(name: string) {
         switch(helpers.stringTrim(name)) {
@@ -43,7 +51,7 @@ namespace myTiles {
 . . . . . . . . . . . . . . . . 
 `, [myTiles.transparency16], TileScale.Sixteen);
             case "level2":
-            case "level2":return tiles.createTilemap(hex`140014000f0f0f0102050c0c0c0c0c0c0c060101020f0f0f0f0f0102050404040404040404040c0601020f0f0f0102050404040404040404040404040601020f01020504040404040404040404040404040601020102090404040404040404040404040404040102050c0404040404040404040404040404040406030904040404040404040404040404040404040a030904040404040404040404040404040404040a030904040404040404041010100404040404040a03090404040404040404101010040404040404040e090404040404040404101010040404040404040d0904040404040404040404040404040404040a030904040404040404040404040404040404040a03080b04040404040404040404040404040404070301020904040404040404040404040404040a010201020804040404040404040404040404040701020f0102080404040404040404040404040701020f0f0f0102080404040404040404040b0701020f0f0f0f0f0102080b0b0b0b0b0b0b0701020f0f0f0f0f0f0f0f0f010201020102010201020f0f0f0f0f`, img`
+            case "level2":return tiles.createTilemap(hex`140014000f0f0f0102050c0c0c0c0c0c0c060101020f0f0f0f0f0102050404040404040404040c0601020f0f0f0102050404040404040404040404040601020f01020504040404040404040404040404040601020102090404040404040404040404040404040102050c0404040404040404040404040404040406030904040404040404040404040404040404040a030904040404040404040404040404040404040a030904040404040404040404040404040404040a03090404040404040404041004040404040404040e090404040404040404040404040404040404040d0904040404040404040404040404040404040a030904040404040404040404040404040404040a03080b04040404040404040404040404040404070301020904040404040404040404040404040a010201020804040404040404040404040404040701020f0102080404040404040404040404040701020f0f0f0102080404040404040404040b0701020f0f0f0f0f0102080b0b0b0b0b0b0b0701020f0f0f0f0f0f0f0f0f010201020102010201020f0f0f0f0f`, img`
 ...22.........222...
 ..22............22..
 .22..............22.
@@ -64,7 +72,7 @@ namespace myTiles {
 ..22............22..
 ...22.........22....
 .....2222222222.....
-`, [myTiles.transparency16,sprites.builtin.crowd0,sprites.builtin.crowd3,sprites.builtin.brick,sprites.castle.tilePath5,sprites.castle.tilePath1,sprites.castle.tilePath3,sprites.castle.tilePath9,sprites.castle.tilePath7,sprites.castle.tilePath4,sprites.castle.tilePath6,sprites.castle.tilePath8,sprites.castle.tilePath2,myTiles.tile5,myTiles.tile7,sprites.builtin.forestTiles0,myTiles.tile9], TileScale.Sixteen);
+`, [myTiles.transparency16,sprites.builtin.crowd0,sprites.builtin.crowd3,sprites.builtin.brick,sprites.castle.tilePath5,sprites.castle.tilePath1,sprites.castle.tilePath3,sprites.castle.tilePath9,sprites.castle.tilePath7,sprites.castle.tilePath4,sprites.castle.tilePath6,sprites.castle.tilePath8,sprites.castle.tilePath2,myTiles.tile5,myTiles.tile7,sprites.builtin.forestTiles0,myTiles.tile12], TileScale.Sixteen);
         }
         return null;
     })
@@ -90,6 +98,14 @@ namespace myTiles {
             case "tile8":return tile8;
             case "myTile7":
             case "tile9":return tile9;
+            case "myTile8":
+            case "tile10":return tile10;
+            case "myTile9":
+            case "tile11":return tile11;
+            case "myTile10":
+            case "tile12":return tile12;
+            case "myTile11":
+            case "tile13":return tile13;
         }
         return null;
     })
