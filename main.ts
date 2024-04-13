@@ -28,6 +28,7 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.chain, function (sprite, oth
         . . . . . . . . . . . . . . . . 
         `, otherSprite, sprite.vx + 5, sprite.vy + 5)
     sprites.destroy(otherSprite)
+    sprites.destroy(sprite)
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (move_allowed == true) {
@@ -54,6 +55,30 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     }
 })
+sprites.onOverlap(SpriteKind.chain, SpriteKind.collectable, function (sprite, otherSprite) {
+    projectile4 = sprites.createProjectileFromSprite(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . b . . . . . . . 
+        . . . . . . . b b . . . . . . . 
+        . . . . . . . c b . . . . . . . 
+        . . . . . . b c b . . . . . . . 
+        . . b b b b b b b b . . . . . . 
+        . . . b c c b . b c c b . . . . 
+        . . . . b b b b b b b b b . . . 
+        . . . . . . b c b . . . . . . . 
+        . . . . . . b c . . . . . . . . 
+        . . . . . . b b . . . . . . . . 
+        . . . . . . b . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, otherSprite, 0 - sprite.vx, 0 - sprite.vy)
+    sprites.destroy(otherSprite)
+    pause(500)
+    sprites.destroyAllSpritesOfKind(SpriteKind.chain)
+    projectile4.setVelocity(0, 0)
+})
 controller.A.onEvent(ControllerButtonEvent.Repeated, function () {
     statusbar.value += -1
     projectile2 = sprites.createProjectileFromSprite(img`
@@ -76,6 +101,27 @@ controller.A.onEvent(ControllerButtonEvent.Repeated, function () {
         `, mySprite, randint(-100, 100), randint(-100, 100))
     tiles.placeOnRandomTile(projectile2, sprites.castle.tilePath5)
 })
+sprites.onDestroyed(SpriteKind.chain, function (sprite) {
+    pause(2000)
+    projectile4 = sprites.createProjectileFromSprite(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . b . . . . . . . 
+        . . . . . . . b b . . . . . . . 
+        . . . . . . . c b . . . . . . . 
+        . . . . . . b c b . . . . . . . 
+        . . b b b b b b b b . . . . . . 
+        . . . b c c b . b c c b . . . . 
+        . . . . b b b b b b b b b . . . 
+        . . . . . . b c b . . . . . . . 
+        . . . . . . b c . . . . . . . . 
+        . . . . . . b b . . . . . . . . 
+        . . . . . . b . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, sprite, sprite.vx, sprite.vy)
+})
 function wave () {
     for (let index = 0; index < B_move; index++) {
         projectile = sprites.createProjectileFromSprite(img`
@@ -97,7 +143,6 @@ function wave () {
             . . . . . . . . . . . . . . . . 
             `, mySprite, randint(-50, 50), randint(-50, 50))
         statusbar.value += -1
-        pause(randint(0, 1))
     }
 }
 info.onLifeZero(function () {
@@ -109,10 +154,17 @@ info.onLifeZero(function () {
         game.gameOver(false)
     }
 })
-sprites.onOverlap(SpriteKind.Projectile, SpriteKind.droid, function (sprite, otherSprite) {
+sprites.onOverlap(SpriteKind.Player, SpriteKind.decoy, function (sprite, otherSprite) {
     sprites.destroy(otherSprite)
-    amount_of_defeated_troops += 1
-    info.changeScoreBy(1)
+    if (mySprite2) {
+        mySprite3.follow(mySprite2)
+        pause(15000)
+        mySprite3.follow(mySprite)
+    }
+})
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.droid, function (sprite, otherSprite) {
+    sprites.destroy(otherSprite, effects.fire, 500)
+    sprites.destroy(sprite)
 })
 statusbars.onStatusReached(StatusBarKind.Energy, statusbars.StatusComparison.EQ, statusbars.ComparisonType.Fixed, 100, function (status) {
     move_allowed = true
@@ -249,25 +301,20 @@ function choose_round () {
     }
     return round
 }
-sprites.onOverlap(SpriteKind.Player, SpriteKind.decoy, function (sprite, otherSprite) {
-    sprites.destroy(otherSprite)
-    if (mySprite2) {
-        mySprite3.follow(mySprite2)
-        pause(15000)
-        mySprite3.follow(mySprite)
-    }
-})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.chain, function (sprite, otherSprite) {
     sprite.setVelocity(otherSprite.vx, otherSprite.vy)
+    sprites.destroy(otherSprite)
+})
+sprites.onDestroyed(SpriteKind.droid, function (sprite) {
+    amount_of_defeated_troops += 1
+    info.changeScoreBy(1)
 })
 statusbars.onZero(StatusBarKind.Energy, function (status) {
     move_allowed = false
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.droid, function (sprite, otherSprite) {
     sprites.destroy(otherSprite)
-    amount_of_defeated_troops += 1
     info.changeLifeBy(-1)
-    info.changeScoreBy(1)
     sprite.setVelocity(otherSprite.vx, otherSprite.vy)
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -283,8 +330,8 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.collectable, function (sprite, o
 })
 let mySprite4: Sprite = null
 let mySprite5: Sprite = null
-let mySprite2: Sprite = null
 let round = 0
+let mySprite2: Sprite = null
 let projectile: Sprite = null
 let projectile2: Sprite = null
 let projectile5: Sprite = null
@@ -334,6 +381,7 @@ let mySprite7 = sprites.create(img`
     . . . 4 . . . . . . . . . . . . 
     . . . 4 . . . . . . . . . . . . 
     `, SpriteKind.decoy)
+tiles.placeOnRandomTile(mySprite7, assets.tile`myTile10`)
 mySprite3.setVelocity(randint(-50, 50), randint(-50, 50))
 move_allowed = true
 mySprite = sprites.create(img`
@@ -418,6 +466,27 @@ game.onUpdateInterval(10000, function () {
         . . . . . . . . . . . . . . . . 
         `, SpriteKind.collectable)
     tiles.placeOnRandomTile(mySprite4, sprites.castle.tilePath5)
+})
+game.onUpdateInterval(10000, function () {
+    mySprite4 = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . 8 . . . . . . . 
+        . . . . . . . 8 8 . . . . . . . 
+        . . . . . . . 6 8 . . . . . . . 
+        . . . . . . 8 6 8 . . . . . . . 
+        . . . . . 8 9 9 9 8 . . . . . . 
+        . . . 8 6 6 9 . 9 6 6 8 . . . . 
+        . . 8 8 8 8 9 9 9 8 8 8 8 . . . 
+        . . . . . . 8 6 8 . . . . . . . 
+        . . . . . . 8 6 . . . . . . . . 
+        . . . . . . 8 8 . . . . . . . . 
+        . . . . . . 8 . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.collectable)
+    tiles.placeOnRandomTile(mySprite4, assets.tile`myTile10`)
 })
 game.onUpdateInterval(2000, function () {
     choose_round()
